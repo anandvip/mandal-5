@@ -258,6 +258,7 @@
       background-color: #f0f0f0;
       color: #333;
     }
+    /*formatting mwnu added to this version*/
   </style>
   <script src="https://unpkg.com/htmx.org@1.6.1"></script>
 </head>
@@ -456,7 +457,11 @@
         morningSessionNotes.contentEditable = "true";
         morningSessionNotes.dataset.index = i;
         morningSessionNotes.innerHTML = currentMandala.sessions[i].notes || ""; // Load with formatting
-        morningSessionNotes.setAttribute("onblur", "saveSessionNotes(event)");
+               morningSessionNotes.setAttribute("onblur", "saveSessionNotes(event)");
+        morningSessionNotes.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          showContextMenu(e, this);
+        });
         sessionEntry.appendChild(morningSessionNotes);
 
         console.log(`Function: displaySessionLog -> Added Morning Session: Day ${day}, Notes: ${morningSessionNotes.innerHTML}`);
@@ -469,8 +474,7 @@
 
           const eveningSessionCompleted = document.createElement("div");
           eveningSessionCompleted.classList.add("session-item");
-          eveningSessionCompleted.text
-          Content = `Completed: ${currentMandala.sessions[i + 1].completed ? "Yes" : "No"}`;
+          eveningSessionCompleted.textContent = `Completed: ${currentMandala.sessions[i + 1].completed ? "Yes" : "No"}`;
           sessionEntry.appendChild(eveningSessionCompleted);
 
           const eveningSessionNotes = document.createElement("span");
@@ -479,6 +483,10 @@
           eveningSessionNotes.dataset.index = i + 1;
           eveningSessionNotes.innerHTML = currentMandala.sessions[i + 1].notes || ""; // Load with formatting
           eveningSessionNotes.setAttribute("onblur", "saveSessionNotes(event)");
+          eveningSessionNotes.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showContextMenu(e, this);
+          });
           sessionEntry.appendChild(eveningSessionNotes);
 
           console.log(`Function: displaySessionLog -> Added Evening Session: Day ${day}, Notes: ${eveningSessionNotes.innerHTML}`);
@@ -520,6 +528,10 @@
         morningNoteContent.setAttribute("contenteditable", "true");
         morningNoteContent.dataset.index = i;
         morningNoteContent.setAttribute("onblur", "saveSessionNotes(event)");
+        morningNoteContent.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          showContextMenu(e, this);
+        });
         morningNoteCard.appendChild(morningNoteContent);
 
         notesSectionElement.appendChild(morningNoteCard);
@@ -534,6 +546,10 @@
           eveningNoteContent.setAttribute("contenteditable", "true");
           eveningNoteContent.dataset.index = i + 1;
           eveningNoteContent.setAttribute("onblur", "saveSessionNotes(event)");
+          eveningNoteContent.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showContextMenu(e, this);
+          });
           eveningNoteCard.appendChild(eveningNoteContent);
 
           notesSectionElement.appendChild(eveningNoteCard);
@@ -544,261 +560,34 @@
       }
     }
 
-    function exportNotes() {
-      console.log("Function: exportNotes called");
-      const currentMandala = mandalas[0];
-      let exportHTML = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Meditation Notes Export</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 20px;
-              background-color: #f4f4f4;
-            }
-            .container {
-              max-width: 1000px;
-              margin: 0 auto;
-              background-color: #fff;
-              padding: 20px;
-              border-radius: 5px;
-              box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            }
-            .header {
-              position: relative;
-              margin-bottom: 20px;
-              text-align: center;
-              background-image: url('https://github.com/anandvip/kali-yuga/blob/main/thoughts.png?raw=true');
-              background-size: cover;
-              background-position: center;
-              width: 100%;
-              height: 500px;
-              border-radius: 20px;
-              overflow: hidden;
-            }
-            .header h1 {
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              color: white;
-              font-size: 2.5em;
-              margin: 0;
-            }
-            .note-card {
-              padding: 10px;
-              margin: 10px;
-              background-color: #f9f9f9;
-              border-radius: 5px;
-            }
-            .note-grid {
-              display: grid;
-              grid-template-columns: repeat(5, 1fr);
-              gap: 10px;
-            }
-            .footer {
-              margin-top: 20px;
-              padding: 20px;
-              background-color: #f9f9f9;
-              border-radius: 5px;
-              text-align: center;
-              display: grid;
-              grid-template-columns: repeat(3, 1fr);
-              gap: 10px;
-            }
-            @media (max-width: 768px) {
-              .note-grid {
-                grid-template-columns: repeat(2, 1fr);
-              }
-              .footer {
-                grid-template-columns: repeat(2, 1fr);
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>${currentMandala.name}</h1>
-            </div>
-            <div class="note-grid">`;
+    function showContextMenu(event, element) {
+      const contextMenu = document.getElementById("custom-context-menu");
+      contextMenu.style.top = `${event.clientY}px`;
+      contextMenu.style.left = `${event.clientX}px`;
+      contextMenu.style.display = "block";
 
-      currentMandala.sessions.forEach((session, index) => {
-        if (session.notes && session.notes.trim() !== "") {
-          exportHTML += `
-            <div class="note-card">
-              <p>Day ${Math.floor(index / 2) + 1} ${index % 2 === 0 ? 'Morning' : 'Evening'} (${session.date}): ${session.notes || ""}</p>
-              <p>Date: ${session.date} | Time: ${session.startTime} - ${session.endTime}</p>
-              <p>Observer: ${observerName}</p>
-            </div>`;
-        }
+      contextMenu.querySelectorAll('li').forEach(li => {
+        li.onclick = () => {
+          formatText(li.dataset.command, element);
+          contextMenu.style.display = "none";
+        };
       });
 
-      exportHTML += `
-            </div>
-            <div class="footer">
-              <p>Duration: ${formatDate(new Date(currentMandala.startDate))} to ${formatDate(new Date(currentMandala.endDate))}</p>
-              <p>Exported on: ${new Date().toLocaleDateString()}</p>
-              <p>Observations captured by: ${observerName}</p>
-            </div>
-          </div>
-        </body>
-      </html>`;
-
-      const exportBlob = new Blob([exportHTML], { type: 'text/html' });
-      const exportUrl = URL.createObjectURL(exportBlob);
-      const a = document.createElement('a');
-      a.href = exportUrl;
-      a.download = `${currentMandala.name}_notes.html`;
-      a.click();
-      URL.revokeObjectURL(exportUrl);
+      document.addEventListener("click", () => {
+        contextMenu.style.display = "none";
+      }, { once: true });
     }
 
-    function createSession() {
-      const currentMandala = mandalas[0];
-      const session = {
-        startTime: null,
-        endTime: null,
-        completed: false,
-        notes: "",
-        date: formatDate(new Date())
-      };
-
-      currentMandala.sessions.push(session);
-      localStorage.setItem("mandalas", JSON.stringify(mandalas));
-      showCountdownModal();
-      updateMandalaInfo();
-      displaySessionLog();
-      console.log("New session created:", session);
-    }
-
-    let countdownInterval;
-    function startTimer() {
-      const currentMandala = mandalas[0];
-      const currentSession = currentMandala.sessions[currentMandala.sessions.length - 1];
-      const timerDuration = 13 * 60; // 13 minutes
-      let timeLeft = timerDuration;
-
-      if (!currentSession.startTime) {
-        currentSession.startTime = new Date().toLocaleTimeString();
-        localStorage.setItem("mandalas", JSON.stringify(mandalas));
-      }
-
-      countdownInterval = setInterval(() => {
-        if (timeLeft <= 0) {
-          clearInterval(countdownInterval);
-          currentSession.endTime = new Date().toLocaleTimeString();
-          currentSession.completed = true;
-          localStorage.setItem("mandalas", JSON.stringify(mandalas));
-          showToast("Session completed!");
-          updateMandalaInfo();
-          displaySessionLog();
-          closeCountdownModal();
-          console.log("Session completed:", currentSession);
-        } else {
-          timeLeft--;
-          const minutes = Math.floor(timeLeft / 60);
-          const seconds = timeLeft % 60;
-          document.getElementById("countdownTimer").textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-        }
-      }, 1000);
-    }
-
-    function stopTimer() {
-      clearInterval(countdownInterval);
-    }
-
-    function incrementTimer() {
-      const countdownTimerElement = document.getElementById("countdownTimer");
-      let time = countdownTimerElement.textContent.split(':');
-      let minutes = parseInt(time[0]);
-      let seconds = parseInt(time[1]);
-      minutes++;
-      countdownTimerElement.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-    }
-
-    function decrementTimer() {
-      const countdownTimerElement = document.getElementById("countdownTimer");
-      let time = countdownTimerElement.textContent.split(':');
-      let minutes = parseInt(time[0]);
-      let seconds = parseInt(time[1]);
-      if (minutes > 0) {
-        minutes--;
-      }
-      countdownTimerElement.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-    }
-
-    function showCountdownModal() {
-      document.getElementById("countdownModal").style.display = "block";
-    }
-
-    function closeCountdownModal() {
-      document.getElementById("countdownModal").style.display = "none";
-      stopTimer(); // Stop the timer when closing the modal
-    }
-
-    function deleteMandal() {
-      if (confirm("Are you sure you want to delete the current mandala?")) {
-        mandalas = [];
-        localStorage.setItem("mandalas", JSON.stringify(mandalas));
-        updateMandalaInfo();
-        displaySessionLog();
-        showToast("Mandala deleted.");
-      }
-    }
-
-    function checkExistingMandala() {
-      const currentMandala = mandalas[0];
-      if (currentMandala && new Date(currentMandala.endDate) < new Date()) {
-        showToast("The current mandala has ended. Would you like to mark it as complete?", "yesNo");
-      }
-    }
-
-    function showToast(message, type = "info") {
-      const toast = document.createElement("div");
-      toast.classList.add("toast");
-      toast.textContent = message;
-      if (type === "yesNo") {
-        const yesBtn = document.createElement("button");
-        yesBtn.textContent = "Yes";
-        yesBtn.onclick = () => {
-          moveMandalaToCompleted();
-          document.body.removeChild(toast);
-        };
-        const noBtn = document.createElement("button");
-        noBtn.textContent = "Cancel";
-        noBtn.onclick = () => document.body.removeChild(toast);
-        toast.appendChild(yesBtn);
-        toast.appendChild(noBtn);
-      } else {
-        setTimeout(() => document.body.removeChild(toast), 3000);
-      }
-      document.body.appendChild(toast);
-    }
-
-    function moveMandalaToCompleted() {
-      const currentMandala = mandalas.shift();
-      let completedMandalas = localStorage.getItem("completedMandalas");
-      completedMandalas = completedMandalas ? JSON.parse(completedMandalas) : [];
-      completedMandalas.push(currentMandala);
-      localStorage.setItem("completedMandalas", JSON.stringify(completedMandalas));
-      localStorage.setItem("mandalas", JSON.stringify(mandalas));
-      updateMandalaInfo();
-      displaySessionLog();
-      updateMeditationNotes();
-      showToast("Mandala marked as completed and moved to history.", "info");
+    function formatText(command, element) {
+      document.execCommand(command, false, null);
+      element.focus();
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       if (mandalas.length === 0) {
         // Initialize a new mandala if none exists
         const newMandala = {
-          name: "Mandalname here!",
+          name: "Bring Awareness to chit",
           startDate: formatDate(new Date()),
           endDate: formatDate(calculateEndDate(new Date(), 48)),
           sessions: [],
@@ -812,7 +601,148 @@
       displaySessionLog();
       updateMeditationNotes();
     });
+    // Continue from the updateMeditationNotes function
+
+function exportNotes() {
+  console.log("Function: exportNotes called");
+  const currentMandala = mandalas[0];
+  let exportHTML = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Meditation Notes Export</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 20px;
+          background-color: #f4f4f4;
+        }
+        .container {
+          max-width: 1000px;
+          margin: 0 auto;
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          position: relative;
+          margin-bottom: 20px;
+          text-align: center;
+          background-image: url('https://github.com/anandvip/kali-yuga/blob/main/thoughts.png?raw=true');
+          background-size: cover;
+          background-position: center;
+          width: 100%;
+          height: 500px;
+          border-radius: 20px;
+          overflow: hidden;
+        }
+        .header h1 {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+          font-size: 2.5em;
+          margin: 0;
+        }
+        .note-card {
+          padding: 10px;
+          margin: 10px;
+          background-color: #070707;
+          border-radius: 5px;
+          color: #fff;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>${currentMandala.name} Meditation Notes</h1>
+        </div>
+  `;
+
+  let day = 1;
+  for (let i = 0; i < currentMandala.sessions.length; i += 2) {
+    const morningSession = currentMandala.sessions[i];
+    const eveningSession = currentMandala.sessions[i + 1];
+
+    exportHTML += `
+      <div class="note-card">
+        <p><strong>Day ${day} Morning (${morningSession.date}):</strong></p>
+        <p>${morningSession.notes || ""}</p>
+      </div>
+    `;
+
+    if (eveningSession) {
+      exportHTML += `
+        <div class="note-card">
+          <p><strong>Day ${day} Evening (${eveningSession.date}):</strong></p>
+          <p>${eveningSession.notes || ""}</p>
+        </div>
+      `;
+    }
+
+    day++;
+  }
+
+  exportHTML += `
+        </div>
+      </body>
+    </html>
+  `;
+
+  const blob = new Blob([exportHTML], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "meditation_notes.html";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function showContextMenu(event, element) {
+  const contextMenu = document.getElementById("custom-context-menu");
+  contextMenu.style.top = `${event.clientY}px`;
+  contextMenu.style.left = `${event.clientX}px`;
+  contextMenu.style.display = "block";
+
+  contextMenu.querySelectorAll('li').forEach(li => {
+    li.onclick = () => {
+      formatText(li.dataset.command, element);
+      contextMenu.style.display = "none";
+    };
+  });
+
+  document.addEventListener("click", () => {
+    contextMenu.style.display = "none";
+  }, { once: true });
+}
+
+function formatText(command, element) {
+  document.execCommand(command, false, null);
+  element.focus();
+}
+
+// Add event listeners to session notes for the context menu
+document.querySelectorAll('.session-notes').forEach(note => {
+  note.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    showContextMenu(e, this);
+  });
+});
+
+// Initial data load and display
+updateMandalaInfo();
+displaySessionLog();
+updateMeditationNotes();
+
   </script>
 </body>
 </html>
+
 
