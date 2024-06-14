@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meditation Dashboard</title>
+  <title>Meditation Tracker</title>
   <style>
     :root {
       --editable-border-color: 1px dashed #ccc;
@@ -223,57 +223,53 @@
       text-decoration: none;
       cursor: pointer;
     }
-
-    /* context menu styles */
+    /*context menu styles*/
     .context-menu {
-      display: none;
-      position: absolute;
-      background-color: white;
-      border: 1px solid #ccc;
-      box-shadow: 0px 0px 5px #aaa;
-      z-index: 1000;
-      color: #fff;
-      border-radius: 5px;
-    }
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 5px #aaa;
+    z-index: 1000;
+    color: #fff;
+    border-radius: 5px;
+}
+.context-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.context-menu ul li {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.context-menu ul li svg {
+    margin-right: 8px;
+    width: 20px; /* Adjust SVG size */
+}
+.context-menu ul li:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
 
-    .context-menu ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .context-menu ul li {
-      padding: 8px 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-    }
-
-    .context-menu ul li svg {
-      margin-right: 8px;
-      width: 20px; /* Adjust SVG size */
-    }
-
-    .context-menu ul li:hover {
-      background-color: #f0f0f0;
-      color: #333;
-    }
   </style>
   <script src="https://unpkg.com/htmx.org@1.6.1"></script>
 </head>
 <body>
   <div id="custom-context-menu" class="context-menu">
     <ul>
-      <li data-command="bold"><svg viewBox="0 0 384 512" width="20"><path d="M333.49 238a122 122 0 0 0 27-65.21C367.87 96.49 308 32 233.42 32H34a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h31.87v288H34a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h209.32c70.8 0 134.14-51.75 141-122.4 4.74-48.45-16.39-92.06-50.83-119.6zM145.66 112h87.76a48 48 0 0 1 0 96h-87.76zm87.76 288h-87.76V288h87.76a56 56 0 0 1 0 112z"/></svg>Bold</li>
-      <li data-command="italic"><svg viewBox="0 0 320 512" width="20"><path d="M320 48v32a16 16 0 0 1-16 16h-62.76l-80 320H208a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16H16a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16h62.76l80-320H112a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h192a16 16 0 0 1 16 16z"/></svg>Italic</li>
-      <li data-command="underline"><svg viewBox="0 0 448 512" width="20"><path d="M32 64h32v160c0 88.22 71.78 160 160 160s160-71.78 160-160V64h32a16 16 0 0 0 16-16V16a16 16 0 0 0-16-16H272a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h32v160a80 80 0 0 1-160 0V64h32a16 16 0 0 0 16-16V16a16 16 0 0 0-16-16H32a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16zm400 384H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"/></svg>Underline</li>
-      <li data-command="strikethrough"><svg viewBox="0 0 512 512" width="20"><path d="M496 224H293.9l-87.17-26.83A43.55 43.55 0 0 1 219.55 112h66.79A49.89 49.89 0 0 1 331 139.58a16 16 0 0 0 21.46 7.15l42.94-21.47a16 16 0 0 0 7.16-21.46l-.53-1A128 128 0 0 0 287.51 32h-68a123.68 123.68 0 0 0-123 135.64c2 20.89 10.1 39.83 21.78 56.36H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h480a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm-180.24 96A43 43 0 0 1 336 356.45 43.59 43.59 0 0 1 292.45 400h-66.79A49.89 49.89 0 0 1 181 372.42a16 16 0 0 0-21.46-7.15l-42.94 21.47a16 16 0 0 0-7.16 21.46l.53 1A128 128 0 0 0 224.49 480h68a123.68 123.68 0 0 0 123-135.64 114.25 114.25 0 0 0-5.34-24.36z"/></svg>Strikethrough</li>
-      <li data-command="insertOrderedList"><svg viewBox="0 0 512 512" width="20"><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg>Ordered List</li>
-      <li data-command="insertUnorderedList"><svg viewBox="0 0 512 512" width="20"><path d="M48 48a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm0 160a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm0 160a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm448 16H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16z"/></svg>Unordered List</li>
-      <li data-command="copy"><svg viewBox="0 0 448 512" width="20"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>Copy</li>
-      <li data-command="font"><svg viewBox="0 0 448 512" width="20"><path d="M432 416h-23.41L277.88 53.69A32 32 0 0 0 247.58 32h-47.16a32 32 0 0 0-30.3 21.69L39.41 416H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16h-19.58l23.3-64h152.56l23.3 64H304a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM176.85 272L224 142.51 271.15 272z"/></svg>Font</li>
+        <li onclick="formatText('bold')"><svg viewBox="0 0 384 512" width="20"><path d="M333.49 238a122 122 0 0 0 27-65.21C367.87 96.49 308 32 233.42 32H34a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h31.87v288H34a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h209.32c70.8 0 134.14-51.75 141-122.4 4.74-48.45-16.39-92.06-50.83-119.6zM145.66 112h87.76a48 48 0 0 1 0 96h-87.76zm87.76 288h-87.76V288h87.76a56 56 0 0 1 0 112z"/></svg>Bold</li>
+        <li onclick="formatText('italic')"><svg viewBox="0 0 320 512" width="20"><path d="M320 48v32a16 16 0 0 1-16 16h-62.76l-80 320H208a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16H16a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16h62.76l80-320H112a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h192a16 16 0 0 1 16 16z"/></svg>Italic</li>
+        <li onclick="formatText('underline')"><svg viewBox="0 0 448 512" width="20"><path d="M32 64h32v160c0 88.22 71.78 160 160 160s160-71.78 160-160V64h32a16 16 0 0 0 16-16V16a16 16 0 0 0-16-16H272a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h32v160a80 80 0 0 1-160 0V64h32a16 16 0 0 0 16-16V16a16 16 0 0 0-16-16H32a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16zm400 384H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"/></svg>Underline</li>
+        <li onclick="formatText('strikethrough')"><svg viewBox="0 0 512 512" width="20"><path d="M496 224H293.9l-87.17-26.83A43.55 43.55 0 0 1 219.55 112h66.79A49.89 49.89 0 0 1 331 139.58a16 16 0 0 0 21.46 7.15l42.94-21.47a16 16 0 0 0 7.16-21.46l-.53-1A128 128 0 0 0 287.51 32h-68a123.68 123.68 0 0 0-123 135.64c2 20.89 10.1 39.83 21.78 56.36H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h480a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm-180.24 96A43 43 0 0 1 336 356.45 43.59 43.59 0 0 1 292.45 400h-66.79A49.89 49.89 0 0 1 181 372.42a16 16 0 0 0-21.46-7.15l-42.94 21.47a16 16 0 0 0-7.16 21.46l.53 1A128 128 0 0 0 224.49 480h68a123.68 123.68 0 0 0 123-135.64 114.25 114.25 0 0 0-5.34-24.36z"/></svg>Strikethrough</li>
+        <li onclick="formatText('ol')"><svg viewBox="0 0 512 512" width="20"><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg>Ordered List</li>
+        <li onclick="formatText('ul')"><svg viewBox="0 0 512 512" width="20"><path d="M48 48a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm0 160a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm0 160a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm448 16H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"/></svg>Unordered List</li>
+        <li onclick="formatText('copy')"><svg viewBox="0 0 448 512" width="20"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>Copy</li>
+        <li onclick="formatText('font')"><svg viewBox="0 0 448 512" width="20"><path d="M432 416h-23.41L277.88 53.69A32 32 0 0 0 247.58 32h-47.16a32 32 0 0 0-30.3 21.69L39.41 416H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16h-19.58l23.3-64h152.56l23.3 64H304a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM176.85 272L224 142.51 271.15 272z"/></svg>Font</li>
     </ul>
-  </div>
+</div>
 
   <div class="container">
     <div class="dashboard">
@@ -324,8 +320,6 @@
       <h2>Session Timer</h2>
       <p id="countdownTimer">13:00</p>
       <button onclick="startTimer()">Start</button>
-      <button onclick="incrementTimer()">+</button>
-      <button onclick="decrementTimer()">-</button>
     </div>
   </div>
 
@@ -342,13 +336,13 @@
       if (!(date instanceof Date) || isNaN(date)) {
         return 'Invalid Date';
       }
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return date.toLocaleDateString('en-US', options);
+      const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+      return date.toLocaleDateString('en-GB', options);
     }
 
     // Function to set current date and time
     function setCurrentDateTime() {
-      const currentDateTime = new Date().toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const currentDateTime = new Date().toLocaleString();
       document.getElementById("currentDateTime").textContent = currentDateTime;
     }
 
@@ -455,12 +449,11 @@
         morningSessionNotes.classList.add("session-notes");
         morningSessionNotes.contentEditable = "true";
         morningSessionNotes.dataset.index = i;
-        morningSessionNotes.innerHTML = currentMandala.sessions[i].notes || ""; // Load with formatting
+        morningSessionNotes.textContent = currentMandala.sessions[i].notes || "";
         morningSessionNotes.setAttribute("onblur", "saveSessionNotes(event)");
-        morningSessionNotes.addEventListener("contextmenu", showContextMenu);
         sessionEntry.appendChild(morningSessionNotes);
 
-        console.log(`Function: displaySessionLog -> Added Morning Session: Day ${day}, Notes: ${morningSessionNotes.innerHTML}`);
+        console.log(`Function: displaySessionLog -> Added Morning Session: Day ${day}, Notes: ${morningSessionNotes.textContent}`);
 
         if (currentMandala.sessions[i + 1]) {
           const eveningSessionTime = document.createElement("div");
@@ -477,12 +470,11 @@
           eveningSessionNotes.classList.add("session-notes");
           eveningSessionNotes.contentEditable = "true";
           eveningSessionNotes.dataset.index = i + 1;
-          eveningSessionNotes.innerHTML = currentMandala.sessions[i + 1].notes || ""; // Load with formatting
+          eveningSessionNotes.textContent = currentMandala.sessions[i + 1].notes || "";
           eveningSessionNotes.setAttribute("onblur", "saveSessionNotes(event)");
-          eveningSessionNotes.addEventListener("contextmenu", showContextMenu);
           sessionEntry.appendChild(eveningSessionNotes);
 
-          console.log(`Function: displaySessionLog -> Added Evening Session: Day ${day}, Notes: ${eveningSessionNotes.innerHTML}`);
+          console.log(`Function: displaySessionLog -> Added Evening Session: Day ${day}, Notes: ${eveningSessionNotes.textContent}`);
         }
 
         sessionLogElement.appendChild(sessionEntry);
@@ -494,7 +486,7 @@
       console.log("Function: saveSessionNotes called");
       const currentMandala = mandalas[0];
       const index = event.target.dataset.index;
-      const newNotes = event.target.innerHTML.trim(); // Save with formatting
+      const newNotes = event.target.textContent.trim();
 
       currentMandala.sessions[index].notes = newNotes;
       localStorage.setItem("mandalas", JSON.stringify(mandalas));
@@ -509,7 +501,7 @@
       notesSectionElement.innerHTML = ""; // Clear previous content to avoid duplication
 
       let day = 1;
-      for      (let i = 0; i < currentMandala.sessions.length; i += 2) {
+      for (let i = 0; i < currentMandala.sessions.length; i += 2) {
         const morningSession = currentMandala.sessions[i];
         const eveningSession = currentMandala.sessions[i + 1];
 
@@ -521,11 +513,10 @@
         morningNoteContent.setAttribute("contenteditable", "true");
         morningNoteContent.dataset.index = i;
         morningNoteContent.setAttribute("onblur", "saveSessionNotes(event)");
-        morningNoteContent.addEventListener("contextmenu", showContextMenu);
         morningNoteCard.appendChild(morningNoteContent);
 
         notesSectionElement.appendChild(morningNoteCard);
-        console.log(`Function: updateMeditationNotes -> Displayed Morning Note: Day ${day}, Notes: ${morningNoteContent.innerHTML}`);
+        console.log(`Function: updateMeditationNotes -> Displayed Morning Note: Day ${day}, Notes: ${morningNoteContent.textContent}`);
 
         if (eveningSession) {
           const eveningNoteCard = document.createElement("div");
@@ -536,11 +527,10 @@
           eveningNoteContent.setAttribute("contenteditable", "true");
           eveningNoteContent.dataset.index = i + 1;
           eveningNoteContent.setAttribute("onblur", "saveSessionNotes(event)");
-          eveningNoteContent.addEventListener("contextmenu", showContextMenu);
           eveningNoteCard.appendChild(eveningNoteContent);
 
           notesSectionElement.appendChild(eveningNoteCard);
-          console.log(`Function: updateMeditationNotes -> Displayed Evening Note: Day ${day}, Notes: ${eveningNoteContent.innerHTML}`);
+          console.log(`Function: updateMeditationNotes -> Displayed Evening Note: Day ${day}, Notes: ${eveningNoteContent.textContent}`);
         }
 
         day++;
@@ -583,6 +573,7 @@
               height: 500px;
               border-radius: 20px;
               overflow: hidden;
+              box-shadow: 0 0 10px;
             }
             .header h1 {
               position: absolute;
@@ -594,10 +585,17 @@
               margin: 0;
             }
             .note-card {
-              padding: 10px;
-              margin: 10px;
-              background-color: #f9f9f9;
-              border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            width: 286px;
+            box-shadow: 0 0 10px;
+            }
+            .note-grid {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 10px;
             }
             .footer {
               margin-top: 20px;
@@ -608,8 +606,12 @@
               display: grid;
               grid-template-columns: repeat(3, 1fr);
               gap: 10px;
+              box-shadow: 0 0 10px;
             }
             @media (max-width: 768px) {
+              .note-grid {
+                grid-template-columns: repeat(2, 1fr);
+              }
               .footer {
                 grid-template-columns: repeat(2, 1fr);
               }
@@ -619,82 +621,592 @@
         <body>
           <div class="container">
             <div class="header">
-              <h1>Meditation Notes Export</h1>
+              <h1>${currentMandala.name}</h1>
             </div>
             <div class="note-grid">`;
 
-      let day = 1;
-      for (let i = 0; i < currentMandala.sessions.length; i += 2) {
-        const morningSession = currentMandala.sessions[i];
-        const eveningSession = currentMandala.sessions[i + 1];
-
-        exportHTML += `
-          <div class="note-card">
-            <p>Day ${day} Morning (${morningSession.date}): ${morningSession.notes || ""}</p>
-          </div>`;
-
-        if (eveningSession) {
+      currentMandala.sessions.forEach((session, index) => {
+        if (session.notes && session.notes.trim() !== "") {
           exportHTML += `
             <div class="note-card">
-              <p>Day ${day} Evening (${eveningSession.date}): ${eveningSession.notes || ""}</p>
+              <p>Day ${Math.floor(index / 2) + 1} ${index % 2 === 0 ? 'Morning' : 'Evening'} (${session.date}): ${session.notes || ""}</p>
+              <p>Date: ${session.date} | Time: ${session.startTime} - ${session.endTime}</p>
+              <p>Observer: ${observerName}</p>
             </div>`;
         }
-
-        day++;
-      }
+      });
 
       exportHTML += `
             </div>
             <div class="footer">
-              <p>Exported from the Meditation Tracker</p>
+              <p>Duration: ${formatDate(new Date(currentMandala.startDate))} to ${formatDate(new Date(currentMandala.endDate))}</p>
+              <p>Exported on: ${new Date().toLocaleDateString()}</p>
+              <p>Observations captured by:               ${observerName}</p>
             </div>
           </div>
         </body>
-        </html>`;
+      </html>`;
 
-      const blob = new Blob([exportHTML], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
+      const exportBlob = new Blob([exportHTML], { type: 'text/html' });
+      const exportUrl = URL.createObjectURL(exportBlob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = 'meditation_notes_export.html';
-      document.body.appendChild(a);
+      a.href = exportUrl;
+      a.download = `${currentMandala.name}_notes.html`;
       a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(exportUrl);
     }
 
-    function showContextMenu(event) {
-      event.preventDefault();
-      const contextMenu = document.getElementById("custom-context-menu");
-      contextMenu.style.display = "block";
-      contextMenu.style.left = `${event.pageX}px`;
-      contextMenu.style.top = `${event.pageY}px`;
-
-      const hideContextMenu = () => {
-        contextMenu.style.display = "none";
-        document.removeEventListener("click", hideContextMenu);
+    function createSession() {
+      const currentMandala = mandalas[0];
+      const session = {
+        startTime: null,
+        endTime: null,
+        completed: false,
+        notes: "",
+        date: formatDate(new Date())
       };
 
-      document.addEventListener("click", hideContextMenu);
+      currentMandala.sessions.push(session);
+      localStorage.setItem("mandalas", JSON.stringify(mandalas));
+      showCountdownModal();
+      updateMandalaInfo();
+      displaySessionLog();
+      console.log("New session created:", session);
     }
 
-    function formatText(command) {
-      document.execCommand(command, false, null);
+    function startTimer() {
+      const currentMandala = mandalas[0];
+      const currentSession = currentMandala.sessions[currentMandala.sessions.length - 1];
+      const timerDuration = 13 * 60; // 13 minutes
+      let timeLeft = timerDuration;
+
+      if (!currentSession.startTime) {
+        currentSession.startTime = new Date().toLocaleTimeString();
+        localStorage.setItem("mandalas", JSON.stringify(mandalas));
+      }
+
+      const countdownInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(countdownInterval);
+          currentSession.endTime = new Date().toLocaleTimeString();
+          currentSession.completed = true;
+          localStorage.setItem("mandalas", JSON.stringify(mandalas));
+          showToast("Session completed!");
+          updateMandalaInfo();
+          displaySessionLog();
+          closeCountdownModal();
+          console.log("Session completed:", currentSession);
+        } else {
+          timeLeft--;
+          const minutes = Math.floor(timeLeft / 60);
+          const seconds = timeLeft % 60;
+          document.getElementById("countdownTimer").textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        }
+      }, 1000);
     }
 
-    document.querySelectorAll("[data-command]").forEach(item => {
-      item.addEventListener("click", event => {
-        const command = event.currentTarget.dataset.command;
-        formatText(command);
-      });
-    });
+    function showCountdownModal() {
+      document.getElementById("countdownModal").style.display = "block";
+    }
+
+    function closeCountdownModal() {
+      document.getElementById("countdownModal").style.display = "none";
+    }
+
+    function deleteMandal() {
+      if (confirm("Are you sure you want to delete the current mandala?")) {
+        mandalas = [];
+        localStorage.setItem("mandalas", JSON.stringify(mandalas));
+        updateMandalaInfo();
+        displaySessionLog();
+        showToast("Mandala deleted.");
+      }
+    }
+
+    function checkExistingMandala() {
+      const currentMandala = mandalas[0];
+      if (currentMandala && new Date(currentMandala.endDate) < new Date()) {
+        showToast("The current mandala has ended. Would you like to mark it as complete?", "yesNo");
+      }
+    }
+
+    function showToast(message, type = "info") {
+      const toast = document.createElement("div");
+      toast.classList.add("toast");
+      toast.textContent = message;
+      if (type === "yesNo") {
+        const yesBtn = document.createElement("button");
+        yesBtn.textContent = "Yes";
+        yesBtn.onclick = () => {
+          moveMandalaToCompleted();
+          document.body.removeChild(toast);
+        };
+        const noBtn = document.createElement("button");
+        noBtn.textContent = "Cancel";
+        noBtn.onclick = () => document.body.removeChild(toast);
+        toast.appendChild(yesBtn);
+        toast.appendChild(noBtn);
+      } else {
+        setTimeout(() => document.body.removeChild(toast), 3000);
+      }
+      document.body.appendChild(toast);
+    }
+
+    function moveMandalaToCompleted() {
+      const currentMandala = mandalas.shift();
+      let completedMandalas = localStorage.getItem("completedMandalas");
+      completedMandalas = completedMandalas ? JSON.parse(completedMandalas) : [];
+      completedMandalas.push(currentMandala);
+      localStorage.setItem("completedMandalas", JSON.stringify(completedMandalas));
+      localStorage.setItem("mandalas", JSON.stringify(mandalas));
+      updateMandalaInfo();
+      displaySessionLog();
+      updateMeditationNotes();
+      showToast("Mandala marked as completed and moved to history.", "info");
+    }
 
     document.addEventListener("DOMContentLoaded", () => {
+      if (mandalas.length === 0) {
+        // Initialize a new mandala if none exists
+        const newMandala = {
+          name: "Bring Awareness to chit",
+          startDate: formatDate(new Date()),
+          endDate: formatDate(calculateEndDate(new Date(), 48)),
+          sessions: [],
+          totalSessions: 96
+        };
+        mandalas.push(newMandala);
+        localStorage.setItem("mandalas", JSON.stringify(mandalas));
+      }
+      checkExistingMandala();
       updateMandalaInfo();
       displaySessionLog();
       updateMeditationNotes();
     });
   </script>
+  <script>
+  // Function to format text
+function formatText(command) {
+    console.log(`Attempting to format text as: ${command}`);
+    let selection = window.getSelection();
+    if (!selection.rangeCount) {
+        console.log('No text is selected.');
+        return false;
+    }
+
+    let range = selection.getRangeAt(0);
+    if (range && !range.collapsed) {
+        let formattedElement;
+        switch (command) {
+            case 'bold':
+                formattedElement = document.createElement('span');
+                formattedElement.style.fontWeight = 'bold';
+                break;
+            case 'italic':
+                formattedElement = document.createElement('span');
+                formattedElement.style.fontStyle = 'italic';
+                break;
+            case 'underline':
+                formattedElement = document.createElement('span');
+                formattedElement.style.textDecoration = 'underline';
+                break;
+            case 'strikethrough':
+                formattedElement = document.createElement('span');
+                formattedElement.style.textDecoration = 'line-through';
+                break;
+            case 'ol':
+                formattedElement = document.createElement('ol');
+                let li = document.createElement('li');
+                li.textContent = range.toString();
+                formattedElement.appendChild(li);
+                range.deleteContents();
+                range.insertNode(formattedElement);
+                break;
+            case 'ul':
+                formattedElement = document.createElement('ul');
+                li = document.createElement('li');
+                li.textContent = range.toString();
+                formattedElement.appendChild(li);
+                range.deleteContents();
+                range.insertNode(formattedElement);
+                break;
+            case 'copy':
+                if (document.queryCommandSupported('copy')) {
+                    let text = range.toString();
+                    navigator.clipboard.writeText(text).then(() => {
+                        console.log('Text copied to clipboard');
+                    }).catch(err => {
+                        console.error('Failed to copy text: ', err);
+                    });
+                }
+                break;
+            case 'font':
+                // This would require additional implementation to show a font picker
+                console.log('Font change functionality not implemented.');
+                break;
+            default:
+                console.log('Command not recognized.');
+                return;
+        }
+        if (formattedElement) {
+            range.surroundContents(formattedElement);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        console.log('Formatting applied.');
+    } else {
+        console.log('No range or range is collapsed, cannot apply formatting.');
+    }
+}
+
+// Event listener for context menu
+document.getElementById('note').addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+    console.log('Context menu triggered.');
+    const contextMenu = document.getElementById('custom-context-menu');
+    contextMenu.style.top = `${e.pageY}px`;
+    contextMenu.style.left = `${e.pageX}px`;
+    contextMenu.style.display = 'block';
+});
+
+// Hide context menu on outside click
+document.addEventListener('click', function (e) {
+    if (e.target.closest('.context-menu') === null) {
+        document.getElementById('custom-context-menu').style.display = 'none';
+        console.log('Context menu hidden on outside click.');
+    }
+});
+
+// Prevent default event behavior for context menu interaction
+document.getElementById('custom-context-menu').addEventListener('mousedown', function (e) {
+    e.preventDefault();
+    console.log('Context menu interaction prevented default behavior.');
+});
+    
+    function saveSessionNotes(event) {
+    console.log("Function: saveSessionNotes called");
+    const currentMandala = mandalas[0];
+    const index = event.target.dataset.index;
+    const newNotes = event.target.innerHTML.trim();  // Save with formatting
+
+    currentMandala.sessions[index].notes = newNotes;
+    localStorage.setItem("mandalas", JSON.stringify(mandalas));
+    console.log(`Function: saveSessionNotes -> Saved Notes: ${newNotes} for Session Index: ${index}`);
+    updateMeditationNotes();
+}
+
+function updateMeditationNotes() {
+    console.log("Function: updateMeditationNotes called");
+    const currentMandala = mandalas[0];
+    const notesSectionElement = document.getElementById("notesSection");
+    notesSectionElement.innerHTML = "";  // Clear previous content to avoid duplication
+
+    let day = 1;
+    for (let i = 0; i < currentMandala.sessions.length; i += 2) {
+        const morningSession = currentMandala.sessions[i];
+        const eveningSession = currentMandala.sessions[i + 1];
+
+        const morningNoteCard = document.createElement("div");
+        morningNoteCard.classList.add("note-card");
+
+        const morningNoteContent = document.createElement("p");
+        morningNoteContent.innerHTML = `Day ${day} Morning (${morningSession.date}): ${morningSession.notes || ""}`;
+        morningNoteContent.setAttribute("contenteditable", "true");
+        morningNoteContent.dataset.index = i;
+        morningNoteContent.setAttribute("onblur", "saveSessionNotes(event)");
+        morningNoteCard.appendChild(morningNoteContent);
+
+        notesSectionElement.appendChild(morningNoteCard);
+        console.log(`Function: updateMeditationNotes -> Displayed Morning Note: Day ${day}, Notes: ${morningNoteContent.innerHTML}`);
+
+        if (eveningSession) {
+            const eveningNoteCard = document.createElement("div");
+            eveningNoteCard.classList.add("note-card");
+
+            const eveningNoteContent = document.createElement("p");
+            eveningNoteContent.innerHTML = `Day ${day} Evening (${eveningSession.date}): ${eveningSession.notes || ""}`;
+            eveningNoteContent.setAttribute("contenteditable", "true");
+            eveningNoteContent.dataset.index = i + 1;
+            eveningNoteContent.setAttribute("onblur", "saveSessionNotes(event)");
+            eveningNoteCard.appendChild(eveningNoteContent);
+
+            notesSectionElement.appendChild(eveningNoteCard);
+            console.log(`Function: updateMeditationNotes -> Displayed Evening Note: Day ${day}, Notes: ${eveningNoteContent.innerHTML}`);
+        }
+
+        day++;
+    }
+}
+
+function exportNotes() {
+    console.log("Function: exportNotes called");
+    const currentMandala = mandalas[0];
+    let exportHTML = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Meditation Notes Export</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    background-color: #f4f4f4;
+                }
+                .container {
+                    max-width: 1000px;
+                    margin: 0 auto;
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 5px;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    position: relative;
+                    margin-bottom: 20px;
+                    text-align: center;
+                    background-image: url('https://github.com/anandvip/kali-yuga/blob/main/thoughts.png?raw=true');
+                    background-size: cover;
+                    background-position: center;
+                    width: 100%;
+                    height: 500px;
+                    border-radius: 20px;
+                    overflow: hidden;
+                }
+                .header h1 {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    color: white;
+                    font-size: 2.5em;
+                    margin: 0;
+                }
+                .note-card {
+                    padding: 10px;
+                    margin: 10px;
+                    background-color: #f9f9f9;
+                    border-radius: 5px;
+                }
+                .note-grid {
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 10px;
+                }
+                .footer {
+                    margin-top: 20px;
+                    padding: 20px;
+                    background-color: #f9f9f9;
+                    border-radius: 5px;
+                    text-align: center;
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 10px;
+                }
+                @media (max-width: 768px) {
+                    .note-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                    .footer {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>${currentMandala.name}</h1>
+                </div>
+                <div class="note-grid">`;
+
+    currentMandala.sessions.forEach((session, index) => {
+        if (session.notes && session.notes.trim() !== "") {
+            exportHTML += `
+                <div class="note-card">
+                    <p>Day ${Math.floor(index / 2) + 1} ${index % 2 === 0 ? 'Morning' : 'Evening'} (${session.date}): ${session.notes || ""}</p>
+                    <p>Date: ${session.date} | Time: ${session.startTime} - ${session.endTime}</p>
+                    <p>Observer: ${observerName}</p>
+                </div>`;
+        }
+    });
+
+    exportHTML += `
+                </div>
+                <div class="footer">
+                    <p>Duration: ${formatDate(new Date(currentMandala.startDate))} to ${formatDate(new Date(currentMandala.endDate))}</p>
+                    <p>Exported on: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    <p>Observations captured by: ${observerName}</p>
+                </div>
+            </div>
+        </body>
+        </html>`;
+
+    const exportBlob = new Blob([exportHTML], { type: 'text/html' });
+    const exportUrl = URL.createObjectURL(exportBlob);
+    const a = document.createElement('a');
+    a.href = exportUrl;
+    a.download = `${currentMandala.name}_notes.html`;
+    a.click();
+    URL.revokeObjectURL(exportUrl);
+}
+function createSession() {
+    const currentMandala = mandalas[0];
+    const session = {
+        startTime: null,
+        endTime: null,
+        completed: false,
+        notes: "",
+        date: formatDate(new Date())
+    };
+
+    currentMandala.sessions.push(session);
+    localStorage.setItem("mandalas", JSON.stringify(mandalas));
+    showCountdownModal();
+    updateMandalaInfo();
+    displaySessionLog();
+    console.log("New session created:", session);
+}
+
+let countdownInterval;
+function startTimer() {
+    const currentMandala = mandalas[0];
+    const currentSession = currentMandala.sessions[currentMandala.sessions.length - 1];
+    const timerDuration = 13 * 60; // 13 minutes
+    let timeLeft = timerDuration;
+
+    if (!currentSession.startTime) {
+        currentSession.startTime = new Date().toLocaleTimeString();
+        localStorage.setItem("mandalas", JSON.stringify(mandalas));
+    }
+
+    countdownInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            currentSession.endTime = new Date().toLocaleTimeString();
+            currentSession.completed = true;
+            localStorage.setItem("mandalas", JSON.stringify(mandalas));
+            showToast("Session completed!");
+            updateMandalaInfo();
+            displaySessionLog();
+            closeCountdownModal();
+            console.log("Session completed:", currentSession);
+        } else {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById("countdownTimer").textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(countdownInterval);
+}
+
+function incrementTimer() {
+    const countdownTimerElement = document.getElementById("countdownTimer");
+    let time = countdownTimerElement.textContent.split(':');
+    let minutes = parseInt(time[0]);
+    let seconds = parseInt(time[1]);
+    minutes++;
+    countdownTimerElement.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+}
+
+function decrementTimer() {
+    const countdownTimerElement = document.getElementById("countdownTimer");
+    let time = countdownTimerElement.textContent.split(':');
+    let minutes = parseInt(time[0]);
+    let seconds = parseInt(time[1]);
+    if (minutes > 0) {
+        minutes--;
+    }
+    countdownTimerElement.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+}
+
+function showCountdownModal() {
+    document.getElementById("countdownModal").style.display = "block";
+}
+
+function closeCountdownModal() {
+    document.getElementById("countdownModal").style.display = "none";
+    stopTimer(); // Stop the timer when closing the modal
+}
+
+function deleteMandal() {
+    if (confirm("Are you sure you want to delete the current mandala?")) {
+        mandalas = [];
+        localStorage.setItem("mandalas", JSON.stringify(mandalas));
+        updateMandalaInfo();
+        displaySessionLog();
+        showToast("Mandala deleted.");
+    }
+}
+
+function checkExistingMandala() {
+    const currentMandala = mandalas[0];
+    if (currentMandala && new Date(currentMandala.endDate) < new Date()) {
+        showToast("The current mandala has ended. Would you like to mark it as complete?", "yesNo");
+    }
+}
+
+function showToast(message, type = "info") {
+    const toast = document.createElement("div");
+    toast.classList.add("toast");
+    toast.textContent = message;
+    if (type === "yesNo") {
+        const yesBtn = document.createElement("button");
+        yesBtn.textContent = "Yes";
+        yesBtn.onclick = () => {
+            moveMandalaToCompleted();
+            document.body.removeChild(toast);
+        };
+        const noBtn = document.createElement("button");
+        noBtn.textContent = "Cancel";
+        noBtn.onclick = () => document.body.removeChild(toast);
+        toast.appendChild(yesBtn);
+        toast.appendChild(noBtn);
+    } else {
+        setTimeout(() => document.body.removeChild(toast), 3000);
+    }
+    document.body.appendChild(toast);
+}
+
+function moveMandalaToCompleted() {
+    const currentMandala = mandalas.shift();
+    let completedMandalas = localStorage.getItem("completedMandalas");
+    completedMandalas = completedMandalas ? JSON.parse(completedMandalas) : [];
+    completedMandalas.push(currentMandala);
+    localStorage.setItem("completedMandalas", JSON.stringify(completedMandalas));
+    localStorage.setItem("mandalas", JSON.stringify(mandalas));
+    updateMandalaInfo();
+    displaySessionLog();
+    updateMeditationNotes();
+    showToast("Mandala marked as completed and moved to history.", "info");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (mandalas.length === 0) {
+        // Initialize a new mandala if none exists
+        const newMandala = {
+            name: "Bring Awareness to chit",
+            startDate: formatDate(new Date()),
+            endDate: formatDate(calculateEndDate(new Date(), 48)),
+            sessions: [],
+            totalSessions: 96
+        };
+        mandalas.push(newMandala);
+        localStorage.setItem("mandalas", JSON.stringify(mandalas));
+    }
+    checkExistingMandala();
+    updateMandalaInfo();
+    displaySessionLog();
+    updateMeditationNotes();
+});
+</script>
 </body>
 </html>
+
 
