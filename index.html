@@ -911,5 +911,103 @@
       contextMenu.style.top = `${event.pageY}px`;
     }
   </script>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (mandalas.length === 0) {
+      // Initialize a new mandala if none exists
+      const newMandala = {
+        name: "Bring Awareness to chit",
+        startDate: formatDate(new Date()),
+        endDate: formatDate(calculateEndDate(new Date(), 48)),
+        sessions: [],
+        totalSessions: 96
+      };
+      mandalas.push(newMandala);
+      localStorage.setItem("mandalas", JSON.stringify(mandalas));
+    }
+
+    checkExistingMandala();
+    updateMandalaInfo();
+    displaySessionLog();
+    updateMeditationNotes();
+
+    // Migrate meditation history from meditationHistory to mandalFive
+    migrateMeditationHistory();
+  });
+
+  function migrateMeditationHistory() {
+    const currentMandala = mandalas[0];
+    const mandalFive = JSON.parse(localStorage.getItem("mandalFive") || "[]");
+    const startDate = new Date(currentMandala.startDate);
+    const endDate = new Date(currentMandala.endDate);
+
+    const filteredHistory = meditationHistory.filter(entry => {
+      const entryDate = new Date(entry.date);
+      return entryDate >= startDate && entryDate <= endDate;
+    });
+
+    mandalFive.push(...filteredHistory);
+    localStorage.setItem("mandalFive", JSON.stringify(mandalFive));
+
+    console.log("Meditation history migrated to mandalFive:", filteredHistory);
+  }
+
+  function saveSessionNotes(event) {
+    console.log("Function: saveSessionNotes called");
+    const currentMandala = mandalas[0];
+    const index = event.target.dataset.index;
+    const newNotes = event.target.innerHTML.trim(); // Save with formatting
+
+    currentMandala.sessions[index].notes = newNotes;
+    localStorage.setItem("mandalas", JSON.stringify(mandalas));
+    console.log(`Function: saveSessionNotes -> Saved Notes: ${newNotes} for Session Index: ${index}`);
+    updateMeditationNotes();
+  }
+
+  function updateMeditationNotes() {
+    console.log("Function: updateMeditationNotes called");
+    const currentMandala = mandalas[0];
+    const notesSectionElement = document.getElementById("notesSection");
+    notesSectionElement.innerHTML = ""; // Clear previous content to avoid duplication
+
+    let day = 1;
+    for (let i = 0; i < currentMandala.sessions.length; i += 2) {
+      const morningSession = currentMandala.sessions[i];
+      const eveningSession = currentMandala.sessions[i + 1];
+
+      const morningNoteCard = document.createElement("div");
+      morningNoteCard.classList.add("note-card");
+
+      const morningNoteContent = document.createElement("p");
+      morningNoteContent.innerHTML = `Day ${day} Morning (${morningSession.date}): ${morningSession.notes || ""}`;
+      morningNoteContent.setAttribute("contenteditable", "true");
+      morningNoteContent.dataset.index = i;
+      morningNoteContent.setAttribute("onblur", "saveSessionNotes(event)");
+      morningNoteContent.addEventListener("contextmenu", showContextMenu);
+      morningNoteCard.appendChild(morningNoteContent);
+
+      notesSectionElement.appendChild(morningNoteCard);
+      console.log(`Function: updateMeditationNotes -> Displayed Morning Note: Day ${day}, Notes: ${morningNoteContent.innerHTML}`);
+
+      if (eveningSession) {
+        const eveningNoteCard = document.createElement("div");
+        eveningNoteCard.classList.add("note-card");
+
+        const eveningNoteContent = document.createElement("p");
+        eveningNoteContent.innerHTML = `Day ${day} Evening (${eveningSession.date}): ${eveningSession.notes || ""}`;
+        eveningNoteContent.setAttribute("contenteditable", "true");
+        eveningNoteContent.dataset.index = i + 1;
+        eveningNoteContent.setAttribute("onblur", "saveSessionNotes(event)");
+        eveningNoteContent.addEventListener("contextmenu", showContextMenu);
+        eveningNoteCard.appendChild(eveningNoteContent);
+
+        notesSectionElement.appendChild(eveningNoteCard);
+        console.log(`Function: updateMeditationNotes -> Displayed Evening Note: Day ${day}, Notes: ${eveningNoteContent.innerHTML}`);
+      }
+
+      day++;
+    }
+  }
+</script>
 </body>
 </html>
